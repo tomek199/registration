@@ -1,0 +1,71 @@
+buildscript {
+	ext {
+		springBootVersion = '2.1.1.RELEASE'
+	}
+	repositories {
+		mavenCentral()
+		maven {
+			url "https://plugins.gradle.org/m2/"
+		}
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+		classpath "com.moowork.gradle:gradle-node-plugin:1.2.0"
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'com.moowork.node'
+apply plugin: 'war'
+
+group = 'com.exercise'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 1.8
+
+def webappDir = "$projectDir/src/main/webapp"
+
+node {
+	download = true
+	version = '11.4.0'
+	workDir = file("${webappDir}/node")
+	npmWorkDir = file("{$webappDir}/npm")
+	nodeModulesDir = file(webappDir)
+}
+
+war {
+	enabled = true
+	archiveName "registration.war"
+	exclude('**/node_modules')
+}
+
+repositories {
+	mavenCentral()
+}
+
+
+dependencies {
+	implementation('org.springframework.boot:spring-boot-starter-web')
+	implementation('org.springframework.boot:spring-boot-starter-data-jpa')
+	runtimeOnly('com.h2database:h2')
+	testImplementation('org.springframework.boot:spring-boot-starter-test')
+	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+}
+
+sourceSets {
+	main {
+		resources {
+			srcDirs = ["$webappDir/dist", "$projectDir/src/main/resources"]
+		}
+	}
+}
+
+processResources {
+	dependsOn 'npm_run_build'
+}
+
+npm_run_build {
+	dependsOn 'npmInstall'
+}

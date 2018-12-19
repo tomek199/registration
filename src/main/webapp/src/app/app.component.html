@@ -1,0 +1,18 @@
+<mat-toolbar color="primary">
+  <span>Registration</span>
+</mat-toolbar>
+
+<mat-card>
+  <mat-card-content class="main-container">
+    <mat-form-field>
+      <input matInput placeholder="Enter username" [formControl]="username">
+      <mat-error *ngIf="username.invalid">{{getUsernameErrorMessage()}}</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <input type="password" matInput placeholder="Enter password" [formControl]="password">
+      <mat-error *ngIf="password.invalid">{{getPasswordErrorMessage()}}</mat-error>
+    </mat-form-field>
+    <button mat-raised-button (click)="create()" [disabled]="isFormInvalid()">Register</button>
+    <button mat-button (click)="resetForm()">Reset</button>
+  </mat-card-content>
+</mat-card>
